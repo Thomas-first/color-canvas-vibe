@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import DropZone from '../components/DropZone';
@@ -116,7 +115,11 @@ const Index = () => {
   }, []);
   
   const handleAnimationChange = useCallback((animation: string) => {
-    setSelectedAnimation(animation);
+    setSelectedAnimation('none');
+    
+    setTimeout(() => {
+      setSelectedAnimation(animation);
+    }, 50);
   }, []);
   
   useEffect(() => {
@@ -137,7 +140,7 @@ const Index = () => {
       </header>
       
       <main className="flex-grow py-8 px-4 md:px-8 w-full">
-        <div className="container mx-auto max-w-full">
+        <div className="container mx-auto">
           {!image ? (
             <div className="max-w-xl mx-auto space-y-8 animate-fade-in">
               <div className="text-center space-y-3">
@@ -196,18 +199,20 @@ const Index = () => {
               
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-9">
-                  <Tabs defaultValue="preview">
+                  <Tabs defaultValue="preview" className="w-full">
                     <TabsList className="mb-4">
                       <TabsTrigger value="preview">Theme Preview</TabsTrigger>
                       <TabsTrigger value="image">Source Image</TabsTrigger>
                     </TabsList>
                     
-                    <TabsContent value="preview" className="animate-fade-in">
-                      <ThemePreview 
-                        colors={colors}
-                        selectedFont={selectedFont}
-                        animation={selectedAnimation}
-                      />
+                    <TabsContent value="preview" className="animate-fade-in w-full">
+                      <div className="w-full h-full">
+                        <ThemePreview 
+                          colors={colors}
+                          selectedFont={selectedFont}
+                          animation={selectedAnimation}
+                        />
+                      </div>
                     </TabsContent>
                     
                     <TabsContent value="image" className="animate-fade-in">
