@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Color } from '../utils/colorUtils';
 import { Font } from '../utils/fontUtils';
 import { Laptop, Mail, Menu, MessageCircle, ShoppingCart, Star, Users, X, CheckCircle, Phone, MapPin, Calendar, Coffee, Book, Gift } from 'lucide-react';
@@ -10,15 +10,21 @@ interface ThemePreviewProps {
   colors: Color[];
   selectedFont: Font;
   animation?: string;
-  hoverEffects?: Record<string, string>;
 }
 
 const ThemePreview: React.FC<ThemePreviewProps> = ({ 
   colors, 
   selectedFont,
   animation = 'none',
-  hoverEffects = {}
 }) => {
+  // Ref to force component re-render when animation changes
+  const key = useRef(0);
+  
+  // Update the key when animation changes to force a re-render
+  useEffect(() => {
+    key.current += 1;
+  }, [animation]);
+  
   // Get colors by type for easier access
   const getColor = (type: string): string => {
     const color = colors.find(c => c.type === type);
@@ -31,24 +37,13 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
   const background = getColor('background');
   const text = getColor('text');
 
-  // Get hover effect for specific color type
-  const getHoverEffect = (colorType: string): string => {
-    return hoverEffects[colorType] || 'none';
-  };
-
-  // Build element class with appropriate animation and hover effects
-  const getElementClass = (baseClass: string, colorType: string) => {
+  // Build element class with appropriate animation
+  const getElementClass = (baseClass: string) => {
     const classes = [baseClass];
     
     // Add animation class if specified and not 'none'
     if (animation && animation !== 'none') {
       classes.push(`animate-${animation}`);
-    }
-    
-    // Add hover effect if specified and not 'none'
-    const hoverEffect = getHoverEffect(colorType);
-    if (hoverEffect && hoverEffect !== 'none') {
-      classes.push(hoverEffect);
     }
     
     return classes.join(' ');
@@ -66,6 +61,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
   
   return (
     <div 
+      key={key.current}
       className="w-full h-auto rounded-lg overflow-hidden shadow-xl border flex flex-col animate-fade-in transition-all"
       style={previewStyle}
     >
@@ -78,7 +74,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
         }}
       >
         <div className="flex items-center gap-2">
-          <div className={getElementClass("w-8 h-8 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-110", "primary")}>
+          <div className={getElementClass("w-8 h-8 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-110")}>
             <span style={{ color: 'var(--preview-primary)', fontWeight: 'bold' }}>CV</span>
           </div>
           <h2 className="font-bold text-lg" style={{ fontFamily: 'var(--preview-font)' }}>
@@ -95,7 +91,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
           </div>
           <Button 
             size="sm"
-            className={getElementClass("transition-transform", "primary")}
+            className={getElementClass("transition-transform")}
             style={{ 
               backgroundColor: 'white',
               color: 'var(--preview-primary)'
@@ -118,7 +114,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
       >
         <div className="max-w-2xl mx-auto space-y-6">
           <h1 
-            className={getElementClass("text-3xl md:text-4xl font-bold", "text")}
+            className={getElementClass("text-3xl md:text-4xl font-bold")}
             style={{ 
               color: 'var(--preview-text)'
             }}
@@ -131,7 +127,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
           <div className="flex flex-wrap gap-3 justify-center">
             <Button 
               size="lg"
-              className={getElementClass("transition-transform hover:shadow-md", "primary")}
+              className={getElementClass("transition-transform hover:shadow-md")}
               style={{ 
                 backgroundColor: 'var(--preview-primary)', 
                 color: 'white' 
@@ -142,7 +138,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
             <Button 
               variant="outline" 
               size="lg"
-              className={getElementClass("transition-colors hover:bg-secondary/20", "secondary")}
+              className={getElementClass("transition-colors hover:bg-secondary/20")}
               style={{ 
                 borderColor: 'var(--preview-secondary)', 
                 color: 'var(--preview-text)' 
@@ -173,7 +169,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
             ].map((feature, index) => (
               <div 
                 key={index} 
-                className={getElementClass("p-4 rounded-lg glass flex flex-col items-center text-center transition-all", "secondary")}
+                className={getElementClass("p-4 rounded-lg glass flex flex-col items-center text-center transition-all")}
               >
                 <div className="p-3 rounded-full mb-4">
                   {feature.icon}
@@ -199,7 +195,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
       >
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
           <div className="md:w-1/2">
-            <div className={getElementClass("rounded-lg h-48 w-full", "accent")} style={{ backgroundColor: 'var(--preview-accent)', opacity: 0.7 }}></div>
+            <div className={getElementClass("rounded-lg h-48 w-full")} style={{ backgroundColor: 'var(--preview-accent)', opacity: 0.7 }}></div>
           </div>
           <div className="md:w-1/2 space-y-4">
             <h2 className="text-2xl font-bold">About Us</h2>
@@ -208,7 +204,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
               The styling matches the colors from your uploaded image.
             </p>
             <Button 
-              className={getElementClass("transition-colors hover:opacity-90", "accent")}
+              className={getElementClass("transition-colors hover:opacity-90")}
               style={{ 
                 backgroundColor: 'var(--preview-accent)', 
                 color: 'white' 
@@ -220,7 +216,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
         </div>
       </section>
       
-      {/* Services Section - New */}
+      {/* Services Section */}
       <section 
         className="p-6"
         style={{ 
@@ -244,7 +240,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
             ].map((service, index) => (
               <Card 
                 key={index} 
-                className={getElementClass("flex flex-col items-center p-4 text-center shadow-sm border transition-all", "secondary")}
+                className={getElementClass("flex flex-col items-center p-4 text-center shadow-sm border transition-all")}
               >
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
@@ -277,7 +273,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
             {[1, 2].map((testimonial) => (
               <div 
                 key={testimonial} 
-                className={getElementClass("p-4 rounded-lg glass flex flex-col transition-all", "primary")}
+                className={getElementClass("p-4 rounded-lg glass flex flex-col transition-all")}
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
               >
                 <p className="italic mb-4">"This product has completely transformed how I work. Highly recommended!"</p>
@@ -291,7 +287,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
         </div>
       </section>
       
-      {/* Pricing Section - New */}
+      {/* Pricing Section */}
       <section 
         className="p-6"
         style={{ 
@@ -315,8 +311,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
               <div 
                 key={index}
                 className={getElementClass(
-                  `p-6 rounded-lg border flex flex-col transition-all ${plan.featured ? 'scale-105 shadow-lg' : 'shadow-sm'}`, 
-                  plan.featured ? 'primary' : 'background'
+                  `p-6 rounded-lg border flex flex-col transition-all ${plan.featured ? 'scale-105 shadow-lg' : 'shadow-sm'}`
                 )}
                 style={plan.featured ? { 
                   borderColor: 'var(--preview-primary)', 
@@ -335,7 +330,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
                   ))}
                 </ul>
                 <Button 
-                  className={getElementClass("w-full transition-all", plan.featured ? 'primary' : 'background')}
+                  className={getElementClass("w-full transition-all")}
                   variant={plan.featured ? "default" : "outline"}
                   style={plan.featured ? { 
                     backgroundColor: 'white',
@@ -447,7 +442,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
                 </div>
                 
                 <Button 
-                  className={getElementClass("w-full transition-transform", "primary")}
+                  className={getElementClass("w-full transition-transform")}
                   style={{ 
                     backgroundColor: 'var(--preview-primary)', 
                     color: 'white' 
@@ -461,7 +456,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
         </div>
       </section>
 
-      {/* CTA Section - New */}
+      {/* CTA Section */}
       <section 
         className="py-10 px-6"
         style={{ 
@@ -477,7 +472,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({
           </p>
           <Button 
             size="lg"
-            className={getElementClass("transition-all", "accent")}
+            className={getElementClass("transition-all")}
             style={{ 
               backgroundColor: 'white',
               color: 'var(--preview-accent)'

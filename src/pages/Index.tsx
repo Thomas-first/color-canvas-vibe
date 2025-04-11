@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import DropZone from '../components/DropZone';
@@ -21,13 +22,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [colorMood, setColorMood] = useState('');
   const [selectedAnimation, setSelectedAnimation] = useState('none');
-  const [hoverEffects, setHoverEffects] = useState<Record<string, string>>({
-    primary: 'none',
-    secondary: 'none',
-    accent: 'none',
-    background: 'none',
-    text: 'none'
-  });
   
   const handleImageUpload = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -100,13 +94,6 @@ const Index = () => {
     );
   }, []);
   
-  const handleHoverEffectChange = useCallback((colorType: string, hoverEffect: string) => {
-    setHoverEffects(prev => ({
-      ...prev,
-      [colorType]: hoverEffect
-    }));
-  }, []);
-  
   const handleShuffleColors = useCallback(() => {
     setColors(prevColors => shuffleColors(prevColors));
   }, []);
@@ -126,13 +113,6 @@ const Index = () => {
     setSelectedFont(getRandomFont());
     setColorMood('');
     setSelectedAnimation('none');
-    setHoverEffects({
-      primary: 'none',
-      secondary: 'none',
-      accent: 'none',
-      background: 'none',
-      text: 'none'
-    });
   }, []);
   
   const handleAnimationChange = useCallback((animation: string) => {
@@ -147,7 +127,7 @@ const Index = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="py-6 px-4 md:px-8 border-b">
+      <header className="py-6 px-4 md:px-8 border-b w-full">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Palette className="h-6 w-6 text-primary" />
@@ -156,8 +136,8 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="flex-grow py-8 px-4 md:px-8">
-        <div className="container mx-auto max-w-7xl">
+      <main className="flex-grow py-8 px-4 md:px-8 w-full">
+        <div className="container mx-auto max-w-full">
           {!image ? (
             <div className="max-w-xl mx-auto space-y-8 animate-fade-in">
               <div className="text-center space-y-3">
@@ -193,7 +173,7 @@ const Index = () => {
                     onClick={handleShuffleColors}
                   >
                     <RefreshCw className="h-4 w-4" />
-                    <span>Shuffle Colors</span>
+                    <span className="hidden sm:inline">Shuffle Colors</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -201,7 +181,7 @@ const Index = () => {
                     onClick={handleDownloadPalette}
                   >
                     <Download className="h-4 w-4" />
-                    <span>Download Palette</span>
+                    <span className="hidden sm:inline">Download Palette</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -209,13 +189,13 @@ const Index = () => {
                     onClick={handleReset}
                   >
                     <Upload className="h-4 w-4" />
-                    <span>New Image</span>
+                    <span className="hidden sm:inline">New Image</span>
                   </Button>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-9">
                   <Tabs defaultValue="preview">
                     <TabsList className="mb-4">
                       <TabsTrigger value="preview">Theme Preview</TabsTrigger>
@@ -227,7 +207,6 @@ const Index = () => {
                         colors={colors}
                         selectedFont={selectedFont}
                         animation={selectedAnimation}
-                        hoverEffects={hoverEffects}
                       />
                     </TabsContent>
                     
@@ -245,18 +224,16 @@ const Index = () => {
                   </Tabs>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="lg:col-span-3 space-y-6">
                   <div className="space-y-4">
                     <h3 className="font-medium text-lg">Color Palette</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       {colors.map((color) => (
                         <ColorPicker
                           key={color.type}
                           color={color}
                           onColorChange={handleColorChange}
                           onLockChange={handleLockChange}
-                          onHoverEffectChange={handleHoverEffectChange}
-                          selectedHoverEffect={hoverEffects[color.type]}
                         />
                       ))}
                     </div>
@@ -278,7 +255,7 @@ const Index = () => {
         </div>
       </main>
       
-      <footer className="py-6 px-4 md:px-8 border-t">
+      <footer className="py-6 px-4 md:px-8 border-t w-full">
         <div className="container mx-auto text-center text-sm text-muted-foreground">
           <p>ColorVibe - Generate beautiful themes from your images</p>
         </div>
