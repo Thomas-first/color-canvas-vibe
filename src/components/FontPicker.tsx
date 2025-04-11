@@ -31,7 +31,7 @@ const FontPicker: React.FC<FontPickerProps> = ({
           variant="outline" 
           size="sm" 
           onClick={onRandomFont}
-          className="gap-1"
+          className="gap-1 transition-colors hover:bg-secondary/30"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           <span>Randomize</span>
@@ -47,7 +47,7 @@ const FontPicker: React.FC<FontPickerProps> = ({
             value={selectedFont.name}
             onValueChange={handleFontChange}
           >
-            <SelectTrigger id="font-family">
+            <SelectTrigger id="font-family" className="transition-shadow hover:shadow-md">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
             <SelectContent>
@@ -56,6 +56,7 @@ const FontPicker: React.FC<FontPickerProps> = ({
                   key={font.name} 
                   value={font.name}
                   style={{ fontFamily: font.family }}
+                  className="transition-colors hover:bg-secondary/20"
                 >
                   {font.name}
                 </SelectItem>
@@ -67,7 +68,7 @@ const FontPicker: React.FC<FontPickerProps> = ({
         <div>
           <label className="text-sm mb-1.5 block">Preview</label>
           <div 
-            className="p-3 bg-background/50 rounded-md border" 
+            className="p-3 bg-background/50 rounded-md border transition-all hover:shadow-inner" 
             style={{ fontFamily: selectedFont.family }}
           >
             <h2 className="text-xl font-bold mb-1">The quick brown fox</h2>
