@@ -2,21 +2,36 @@
 import React, { useState } from 'react';
 import { Color, ColorFormat, copyToClipboard } from '../utils/colorUtils';
 import { Button } from './ui/button';
-import { Copy, Lock, Unlock } from 'lucide-react';
+import { Copy, Lock, Unlock, Paintbrush } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
+import { Toggle } from './ui/toggle';
 
 interface ColorPickerProps {
   color: Color;
   onColorChange: (newColor: Color) => void;
   onLockChange: (id: string, locked: boolean) => void;
+  onHoverEffectChange?: (colorType: string, hoverEffect: string) => void;
+  selectedHoverEffect?: string;
 }
+
+const hoverEffects = [
+  { value: 'none', label: 'None' },
+  { value: 'hover-scale', label: 'Scale' },
+  { value: 'hover-elevate', label: 'Elevate' },
+  { value: 'hover-glow', label: 'Glow' },
+  { value: 'hover-bright', label: 'Brighten' },
+];
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ 
   color, 
   onColorChange,
-  onLockChange
+  onLockChange,
+  onHoverEffectChange,
+  selectedHoverEffect = 'none'
 }) => {
   const { toast } = useToast();
   const [selectedFormat, setSelectedFormat] = useState<ColorFormat>('hex');
@@ -42,6 +57,12 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   
   const handleLockClick = () => {
     onLockChange(color.type, !color.locked);
+  };
+
+  const handleHoverEffectChange = (effect: string) => {
+    if (onHoverEffectChange) {
+      onHoverEffectChange(color.type, effect);
+    }
   };
   
   return (
@@ -101,6 +122,46 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             readOnly={selectedFormat !== 'hex'}
           />
         </div>
+
+        {onHoverEffectChange && (
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <Label htmlFor={`hover-effect-${color.type}`}>Hover Effect</Label>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Paintbrush className="h-3.5 w-3.5" />
+                  </Button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-60 p-2">
+                  <div className="text-xs text-muted-foreground">
+                    Apply hover effects to elements using this color
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
+            <Select
+              id={`hover-effect-${color.type}`}
+              value={selectedHoverEffect}
+              onValueChange={handleHoverEffectChange}
+            >
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue placeholder="Select hover effect" />
+              </SelectTrigger>
+              <SelectContent>
+                {hoverEffects.map(effect => (
+                  <SelectItem 
+                    key={effect.value} 
+                    value={effect.value}
+                    className="text-xs"
+                  >
+                    {effect.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
     </div>
   );

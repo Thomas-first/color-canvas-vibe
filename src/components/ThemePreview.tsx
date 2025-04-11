@@ -2,15 +2,23 @@
 import React from 'react';
 import { Color } from '../utils/colorUtils';
 import { Font } from '../utils/fontUtils';
-import { Laptop, Mail, Menu, MessageCircle, ShoppingCart, Star, Users, X } from 'lucide-react';
+import { Laptop, Mail, Menu, MessageCircle, ShoppingCart, Star, Users, X, CheckCircle, Phone, MapPin, Calendar, Coffee, Book, Gift } from 'lucide-react';
 import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
 
 interface ThemePreviewProps {
   colors: Color[];
   selectedFont: Font;
+  animation?: string;
+  hoverEffects?: Record<string, string>;
 }
 
-const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => {
+const ThemePreview: React.FC<ThemePreviewProps> = ({ 
+  colors, 
+  selectedFont,
+  animation = 'none',
+  hoverEffects = {}
+}) => {
   // Get colors by type for easier access
   const getColor = (type: string): string => {
     const color = colors.find(c => c.type === type);
@@ -22,6 +30,29 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
   const accent = getColor('accent');
   const background = getColor('background');
   const text = getColor('text');
+
+  // Get hover effect for specific color type
+  const getHoverEffect = (colorType: string): string => {
+    return hoverEffects[colorType] || 'none';
+  };
+
+  // Build element class with appropriate animation and hover effects
+  const getElementClass = (baseClass: string, colorType: string) => {
+    const classes = [baseClass];
+    
+    // Add animation class if specified and not 'none'
+    if (animation && animation !== 'none') {
+      classes.push(`animate-${animation}`);
+    }
+    
+    // Add hover effect if specified and not 'none'
+    const hoverEffect = getHoverEffect(colorType);
+    if (hoverEffect && hoverEffect !== 'none') {
+      classes.push(hoverEffect);
+    }
+    
+    return classes.join(' ');
+  };
 
   // Create CSS variables for the preview
   const previewStyle = {
@@ -35,7 +66,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
   
   return (
     <div 
-      className="w-full h-[500px] rounded-lg overflow-hidden shadow-xl border flex flex-col animate-fade-in transition-all"
+      className="w-full h-auto rounded-lg overflow-hidden shadow-xl border flex flex-col animate-fade-in transition-all"
       style={previewStyle}
     >
       {/* Navbar */}
@@ -47,7 +78,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
         }}
       >
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-110">
+          <div className={getElementClass("w-8 h-8 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-110", "primary")}>
             <span style={{ color: 'var(--preview-primary)', fontWeight: 'bold' }}>CV</span>
           </div>
           <h2 className="font-bold text-lg" style={{ fontFamily: 'var(--preview-font)' }}>
@@ -64,7 +95,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
           </div>
           <Button 
             size="sm"
-            className="transition-transform hover:scale-105"
+            className={getElementClass("transition-transform", "primary")}
             style={{ 
               backgroundColor: 'white',
               color: 'var(--preview-primary)'
@@ -87,7 +118,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
       >
         <div className="max-w-2xl mx-auto space-y-6">
           <h1 
-            className="text-3xl md:text-4xl font-bold"
+            className={getElementClass("text-3xl md:text-4xl font-bold", "text")}
             style={{ 
               color: 'var(--preview-text)'
             }}
@@ -100,7 +131,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
           <div className="flex flex-wrap gap-3 justify-center">
             <Button 
               size="lg"
-              className="transition-transform hover:scale-105 hover:shadow-md"
+              className={getElementClass("transition-transform hover:shadow-md", "primary")}
               style={{ 
                 backgroundColor: 'var(--preview-primary)', 
                 color: 'white' 
@@ -111,7 +142,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
             <Button 
               variant="outline" 
               size="lg"
-              className="transition-colors hover:bg-secondary/20"
+              className={getElementClass("transition-colors hover:bg-secondary/20", "secondary")}
               style={{ 
                 borderColor: 'var(--preview-secondary)', 
                 color: 'var(--preview-text)' 
@@ -140,7 +171,10 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
               { title: 'Feature Two', icon: <Users className="h-6 w-6" style={{ color: 'var(--preview-primary)' }} /> },
               { title: 'Feature Three', icon: <MessageCircle className="h-6 w-6" style={{ color: 'var(--preview-accent)' }} /> },
             ].map((feature, index) => (
-              <div key={index} className="p-4 rounded-lg glass flex flex-col items-center text-center transition-all hover:shadow-lg hover:translate-y-[-5px]">
+              <div 
+                key={index} 
+                className={getElementClass("p-4 rounded-lg glass flex flex-col items-center text-center transition-all", "secondary")}
+              >
                 <div className="p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
@@ -154,7 +188,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
         </div>
       </section>
       
-      {/* About Section - New */}
+      {/* About Section */}
       <section 
         className="p-6"
         style={{ 
@@ -165,7 +199,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
       >
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
           <div className="md:w-1/2">
-            <div className="rounded-lg h-48 w-full" style={{ backgroundColor: 'var(--preview-accent)', opacity: 0.7 }}></div>
+            <div className={getElementClass("rounded-lg h-48 w-full", "accent")} style={{ backgroundColor: 'var(--preview-accent)', opacity: 0.7 }}></div>
           </div>
           <div className="md:w-1/2 space-y-4">
             <h2 className="text-2xl font-bold">About Us</h2>
@@ -174,7 +208,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
               The styling matches the colors from your uploaded image.
             </p>
             <Button 
-              className="transition-colors hover:opacity-90"
+              className={getElementClass("transition-colors hover:opacity-90", "accent")}
               style={{ 
                 backgroundColor: 'var(--preview-accent)', 
                 color: 'white' 
@@ -186,7 +220,49 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
         </div>
       </section>
       
-      {/* Testimonials Section - New */}
+      {/* Services Section - New */}
+      <section 
+        className="p-6"
+        style={{ 
+          backgroundColor: 'var(--preview-secondary)',
+          color: 'var(--preview-text)',
+          fontFamily: 'var(--preview-font)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">Our Services</h2>
+          <p className="text-center text-muted-foreground mb-8 max-w-lg mx-auto">
+            We offer a range of professional services to help your business succeed.
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: <CheckCircle />, title: 'Service 1' },
+              { icon: <Coffee />, title: 'Service 2' },
+              { icon: <Book />, title: 'Service 3' },
+              { icon: <Gift />, title: 'Service 4' },
+            ].map((service, index) => (
+              <Card 
+                key={index} 
+                className={getElementClass("flex flex-col items-center p-4 text-center shadow-sm border transition-all", "secondary")}
+              >
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                  style={{ backgroundColor: 'var(--preview-primary)', color: 'white' }}
+                >
+                  {service.icon}
+                </div>
+                <h3 className="font-semibold mb-2">{service.title}</h3>
+                <p className="text-xs text-muted-foreground">
+                  Short description of this service and how it benefits customers.
+                </p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
       <section 
         className="p-6"
         style={{ 
@@ -201,7 +277,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
             {[1, 2].map((testimonial) => (
               <div 
                 key={testimonial} 
-                className="p-4 rounded-lg glass flex flex-col transition-all hover:scale-105"
+                className={getElementClass("p-4 rounded-lg glass flex flex-col transition-all", "primary")}
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
               >
                 <p className="italic mb-4">"This product has completely transformed how I work. Highly recommended!"</p>
@@ -215,7 +291,69 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
         </div>
       </section>
       
-      {/* Contact Section - New */}
+      {/* Pricing Section - New */}
+      <section 
+        className="p-6"
+        style={{ 
+          backgroundColor: 'var(--preview-background)',
+          color: 'var(--preview-text)',
+          fontFamily: 'var(--preview-font)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">Pricing Plans</h2>
+          <p className="text-center text-muted-foreground mb-8 max-w-lg mx-auto">
+            Choose the perfect plan that fits your needs.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: 'Basic', price: '$19', features: ['Feature 1', 'Feature 2', 'Feature 3'] },
+              { title: 'Pro', price: '$49', featured: true, features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4', 'Feature 5'] },
+              { title: 'Enterprise', price: '$99', features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4'] },
+            ].map((plan, index) => (
+              <div 
+                key={index}
+                className={getElementClass(
+                  `p-6 rounded-lg border flex flex-col transition-all ${plan.featured ? 'scale-105 shadow-lg' : 'shadow-sm'}`, 
+                  plan.featured ? 'primary' : 'background'
+                )}
+                style={plan.featured ? { 
+                  borderColor: 'var(--preview-primary)', 
+                  backgroundColor: 'var(--preview-primary)',
+                  color: 'white'
+                } : {}}
+              >
+                <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
+                <div className="text-3xl font-bold mb-4">{plan.price}<span className="text-sm font-normal">/mo</span></div>
+                <ul className="space-y-2 mb-6 flex-grow">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center text-sm gap-2">
+                      <CheckCircle className="h-4 w-4 flex-shrink-0" /> 
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button 
+                  className={getElementClass("w-full transition-all", plan.featured ? 'primary' : 'background')}
+                  variant={plan.featured ? "default" : "outline"}
+                  style={plan.featured ? { 
+                    backgroundColor: 'white',
+                    color: 'var(--preview-primary)'
+                  } : {
+                    borderColor: 'var(--preview-primary)',
+                    color: 'var(--preview-primary)'
+                  }}
+                >
+                  Choose Plan
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Contact Section */}
       <section 
         className="p-6"
         style={{ 
@@ -224,26 +362,129 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
           fontFamily: 'var(--preview-font)'
         }}
       >
-        <div className="max-w-lg mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-2">Get In Touch</h2>
-          <p className="text-sm text-muted-foreground mb-6">Have questions? Contact us using the form below.</p>
-          <div className="p-4 rounded-lg glass">
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="h-8 rounded bg-white/50"></div>
-              <div className="h-8 rounded bg-white/50"></div>
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">Get In Touch</h2>
+          <p className="text-center text-muted-foreground mb-8 max-w-lg mx-auto">
+            Have questions? Contact us using the information below or fill out the form.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div
+                  className="mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'var(--preview-primary)', color: 'white' }}
+                >
+                  <MapPin className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Our Location</h3>
+                  <p className="text-sm text-muted-foreground">123 Business Avenue, Suite 100, New York, NY 10001</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div
+                  className="mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'var(--preview-primary)', color: 'white' }}
+                >
+                  <Phone className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Phone Number</h3>
+                  <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div
+                  className="mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'var(--preview-primary)', color: 'white' }}
+                >
+                  <Mail className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Email Address</h3>
+                  <p className="text-sm text-muted-foreground">contact@example.com</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div
+                  className="mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'var(--preview-primary)', color: 'white' }}
+                >
+                  <Calendar className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Working Hours</h3>
+                  <p className="text-sm text-muted-foreground">Mon-Fri: 9AM - 5PM</p>
+                </div>
+              </div>
             </div>
-            <div className="h-8 rounded bg-white/50 mb-4"></div>
-            <div className="h-24 rounded bg-white/50 mb-4"></div>
-            <Button 
-              className="w-full transition-transform hover:scale-105"
-              style={{ 
-                backgroundColor: 'var(--preview-primary)', 
-                color: 'white' 
-              }}
-            >
-              Send Message
-            </Button>
+            
+            <div className="glass p-6 rounded-lg">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm">First Name</label>
+                    <div className="h-9 bg-white/50 rounded border" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm">Last Name</label>
+                    <div className="h-9 bg-white/50 rounded border" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm">Email</label>
+                  <div className="h-9 bg-white/50 rounded border" />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm">Message</label>
+                  <div className="h-28 bg-white/50 rounded border" />
+                </div>
+                
+                <Button 
+                  className={getElementClass("w-full transition-transform", "primary")}
+                  style={{ 
+                    backgroundColor: 'var(--preview-primary)', 
+                    color: 'white' 
+                  }}
+                >
+                  Send Message
+                </Button>
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section - New */}
+      <section 
+        className="py-10 px-6"
+        style={{ 
+          backgroundColor: 'var(--preview-accent)',
+          color: 'white',
+          fontFamily: 'var(--preview-font)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Get Started?</h2>
+          <p className="mb-8 max-w-lg mx-auto">
+            Join thousands of satisfied customers who have already made the switch.
+          </p>
+          <Button 
+            size="lg"
+            className={getElementClass("transition-all", "accent")}
+            style={{ 
+              backgroundColor: 'white',
+              color: 'var(--preview-accent)'
+            }}
+          >
+            Start Your Free Trial
+          </Button>
         </div>
       </section>
       
@@ -251,7 +492,7 @@ const ThemePreview: React.FC<ThemePreviewProps> = ({ colors, selectedFont }) => 
       <footer 
         className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm"
         style={{ 
-          backgroundColor: 'var(--preview-accent)',
+          backgroundColor: 'var(--preview-primary)',
           color: '#ffffff'
         }}
       >

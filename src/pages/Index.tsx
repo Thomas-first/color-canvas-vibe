@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import DropZone from '../components/DropZone';
@@ -21,6 +20,14 @@ const Index = () => {
   const [selectedFont, setSelectedFont] = useState<Font>(getRandomFont());
   const [isLoading, setIsLoading] = useState(false);
   const [colorMood, setColorMood] = useState('');
+  const [selectedAnimation, setSelectedAnimation] = useState('none');
+  const [hoverEffects, setHoverEffects] = useState<Record<string, string>>({
+    primary: 'none',
+    secondary: 'none',
+    accent: 'none',
+    background: 'none',
+    text: 'none'
+  });
   
   const handleImageUpload = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -93,6 +100,13 @@ const Index = () => {
     );
   }, []);
   
+  const handleHoverEffectChange = useCallback((colorType: string, hoverEffect: string) => {
+    setHoverEffects(prev => ({
+      ...prev,
+      [colorType]: hoverEffect
+    }));
+  }, []);
+  
   const handleShuffleColors = useCallback(() => {
     setColors(prevColors => shuffleColors(prevColors));
   }, []);
@@ -111,6 +125,18 @@ const Index = () => {
     setColors(defaultColors);
     setSelectedFont(getRandomFont());
     setColorMood('');
+    setSelectedAnimation('none');
+    setHoverEffects({
+      primary: 'none',
+      secondary: 'none',
+      accent: 'none',
+      background: 'none',
+      text: 'none'
+    });
+  }, []);
+  
+  const handleAnimationChange = useCallback((animation: string) => {
+    setSelectedAnimation(animation);
   }, []);
   
   useEffect(() => {
@@ -200,6 +226,8 @@ const Index = () => {
                       <ThemePreview 
                         colors={colors}
                         selectedFont={selectedFont}
+                        animation={selectedAnimation}
+                        hoverEffects={hoverEffects}
                       />
                     </TabsContent>
                     
@@ -227,6 +255,8 @@ const Index = () => {
                           color={color}
                           onColorChange={handleColorChange}
                           onLockChange={handleLockChange}
+                          onHoverEffectChange={handleHoverEffectChange}
+                          selectedHoverEffect={hoverEffects[color.type]}
                         />
                       ))}
                     </div>
@@ -238,6 +268,8 @@ const Index = () => {
                     selectedFont={selectedFont}
                     onFontChange={setSelectedFont}
                     onRandomFont={handleRandomFont}
+                    selectedAnimation={selectedAnimation}
+                    onAnimationChange={handleAnimationChange}
                   />
                 </div>
               </div>
