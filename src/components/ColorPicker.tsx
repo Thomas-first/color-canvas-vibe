@@ -140,8 +140,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                 </HoverCardContent>
               </HoverCard>
             </div>
+            {/* Remove the id prop from the Select component since it's not allowed by the component's type definition */}
             <Select
-              id={`hover-effect-${color.type}`}
               value={selectedHoverEffect}
               onValueChange={handleHoverEffectChange}
             >
